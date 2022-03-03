@@ -27,7 +27,7 @@ else{
 }
 });
 //create comment
-router.put("/usercomment/:id", async (req, res) => 
+router.post("/usercomment/:id", async (req, res) => 
 {
     const post = await Post.findById(req.params.id);
     const user = await User.findById(req.body._id);
