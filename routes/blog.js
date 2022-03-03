@@ -26,7 +26,7 @@ else{
   res.status(200).json("Only admin can allow to update blog ");
 }
 });
-//UPDATE POST
+//create comment
 router.put("/usercomment/:id", async (req, res) => 
 {
     const post = await Post.findById(req.params.id);
@@ -69,8 +69,8 @@ router.put("/usercomment/:id", async (req, res) =>
 
 
 
-//UPDATE POST
-router.post("/admin/:id", async (req, res) => 
+//create POST
+router.post("/admin", async (req, res) => 
 {
     const post = await Post.findById(req.body._id);
     const user = await User.findOne({ username: req.body.username });
