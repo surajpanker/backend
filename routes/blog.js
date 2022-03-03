@@ -70,7 +70,7 @@ router.put("/usercomment/:id", async (req, res) =>
 
 
 //create POST
-router.post("/admin", async (req, res) => 
+router.put("/admin/:id", async (req, res) => 
 {
     const post = await Post.findById(req.body._id);
     const user = await User.findOne({ username: req.body.username });
@@ -80,7 +80,7 @@ router.post("/admin", async (req, res) =>
     !validated && res.status(400).json("Wrong credentials!");
 
      console.log(user)
-    if(user.username=="admin" && validated){
+    if(user.username=="admin" && validated && req.body.postid==req.params.id){
     }
       else{
         res.status(200).json("Only admin can allow to update blog ");
