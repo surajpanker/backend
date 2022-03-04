@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
   {
+    isAdmin:
+    {
+      type: Boolean,
+    
+    },
+    
     username: {
       type: String,
       required: true,

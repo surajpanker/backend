@@ -7,13 +7,11 @@ const bcrypt = require("bcrypt");
 router.post("/", async (req, res) => {
 
   const newPost = new Post(req.body);
-  const post = await Post.findById(req.body._id);
   const user = await User.findOne({ username: req.body.username });
   !user && res.status(400).json("Wrong credentials!");
 
-  const validated = await bcrypt.compare(req.body.password, user.password);
-  !validated && res.status(400).json("Wrong credentials!");
-  if(user.username=="admin" && validated){
+
+  if( user.isAdmin){
 
   try {
     const savedPost = await newPost.save();
@@ -30,10 +28,10 @@ else{
 router.post("/usercomment/:id", async (req, res) => 
 {
     const post = await Post.findById(req.params.id);
-    const user = await User.findById(req.body._id);
+    const user = await User.findById(req.body.id);
 
     console.log(user)
-    if(req.body.username==user.username){
+    if(user){
    
       try {
         
@@ -72,19 +70,14 @@ router.post("/usercomment/:id", async (req, res) =>
 //create POST
 router.put("/admin/:id", async (req, res) => 
 {
-    const post = await Post.findById(req.body._id);
+    const post = await Post.findById(req.params.id);
     const user = await User.findOne({ username: req.body.username });
     !user && res.status(400).json("Wrong credentials!");
 
-    const validated = await bcrypt.compare(req.body.password, user.password);
-    !validated && res.status(400).json("Wrong credentials!");
 
      console.log(user)
-    if(user.username=="admin" && validated && req.body.postid==req.params.id){
-    }
-      else{
-        res.status(200).json("Only admin can allow to update blog ");
-      }
+    if(user.isAdmin){
+
       try {
         
         const updatedPost = await Post.findByIdAndUpdate(
@@ -102,6 +95,11 @@ router.put("/admin/:id", async (req, res) =>
         res.status(500).json(err);
       }
     
+    }
+      else{
+        res.status(200).json("Only admin can allow to update blog ");
+      }
+    
     
   
   
@@ -109,27 +107,22 @@ router.put("/admin/:id", async (req, res) =>
 
 //DELETE blog
 router.delete("/:id", async (req, res) => {
-  const post = await Post.findById(req.body._id);
+  const post = await Post.findById(req.params.id);
   const user = await User.findOne({ username: req.body.username });
   !user && res.status(400).json("Wrong credentials!");
 
-  const validated = await bcrypt.compare(req.body.password, user.password);
-  !validated && res.status(400).json("Wrong credentials!");
-  if(user.username=="admin" && validated){
+  if(user.isAdmin){
 
   try {
     const post = await Post.findById(req.params.id);
-    
-    if (post.username === "admin") {
+   
       try {
         await post.delete();
         res.status(200).json("Post has been deleted...");
       } catch (err) {
         res.status(500).json(err);
       }
-    } else {
-      res.status(401).json("You can delete only your post!");
-    }
+    
   } catch (err) {
     res.status(500).json(err);
   }
